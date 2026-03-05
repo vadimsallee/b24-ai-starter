@@ -8,8 +8,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "darsyn/ip": "^5",
-        "darsyn/ip-doctrine": "^5.0",
-        "doctrine/dbal": "^3.10.0",
+        "darsyn/ip-doctrine": "^6.0",
+        "doctrine/dbal": "^4.0",
         "doctrine/doctrine-bundle": "^2.19.0",
         "doctrine/doctrine-migrations-bundle": "^3.5.0",
         "doctrine/orm": "^3.6.0",
@@ -19,6 +19,8 @@
         "nelmio/cors-bundle": "^2.0@dev",
         "nesbot/carbon": "^3",
         "odolbeau/phone-number-bundle": "^4.1",
+        "open-telemetry/sdk": "^1.0",
+        "open-telemetry/exporter-otlp": "^1.0",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
@@ -32,7 +34,9 @@
         "symfony/maker-bundle": "^1",
         "phpstan/phpstan": "^1.12",
         "rector/rector": "^1.0",
-        "friendsofphp/php-cs-fixer": "^3.0"
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^11.0",
+        "symfony/browser-kit": "7.3.*"
     },
     "config": {
         "allow-plugins": {

@@ -1,4 +1,4 @@
-.PHONY: help dev-init create-version delete-version dev-front dev-php dev-python dev-node prod-php prod-python prod-node status ps down down-all logs logs-nginxproxy clean composer-install composer-update composer-dumpautoload composer db-create db-migrate db-migrate-create db-schema-update db-schema-validate queue-up queue-down
+.PHONY: help dev-init create-version delete-version dev-front dev-php dev-python dev-node prod-php prod-python prod-node status ps down down-all logs logs-nginxproxy clean composer-install composer-update composer-dumpautoload composer db-create db-migrate db-migrate-create db-schema-update db-schema-validate queue-up queue-down test-telemetry test-telemetry-null test-telemetry-real test-telemetry-config test-telemetry-factory test-telemetry-di test-telemetry-integration test-telemetry-profiles test-telemetry-attribute-groups test-telemetry-filtering test-telemetry-monolog test-telemetry-monolog-e2e test-telemetry-profiles-e2e test-telemetry-e2e test-telemetry-app-events test-telemetry-app-lifecycle test-telemetry-ui-events test-telemetry-action-events test-telemetry-api-calls test-telemetry-error-tracking test-telemetry-session-context test-telemetry-frontend-events test-telemetry-frontend-e2e
 
 # Variables
 DOCKER_COMPOSE = docker compose
@@ -54,6 +54,31 @@ help: ## Show this help message
 	@echo "🛡  Security:"
 	@echo "  security-scan     Run dependency vulnerability audit"
 	@echo "  security-tests    Run orchestrated security test suite"
+	@echo ""
+	@echo "🧪 Testing:"
+	@echo "  test-telemetry              Run all telemetry tests"
+	@echo "  test-telemetry-null         Run NullTelemetryService tests"
+	@echo "  test-telemetry-real         Run RealTelemetryService tests"
+	@echo "  test-telemetry-config       Run OTLP configuration tests"
+	@echo "  test-telemetry-factory      Run TelemetryFactory tests"
+	@echo "  test-telemetry-di           Run Dependency Injection integration tests"
+	@echo "  test-telemetry-integration  Run telemetry integration tests"
+	@echo "  test-telemetry-profiles     Run telemetry profiles tests"
+	@echo "  test-telemetry-attribute-groups  Run AttributeGroupManager tests"
+	@echo "  test-telemetry-filtering    Run attribute filtering tests"
+	@echo "  test-telemetry-monolog      Run Monolog integration tests"
+	@echo "  test-telemetry-monolog-e2e  Run E2E Monolog test (requires b24-ai-starter-otel)"
+	@echo "  test-telemetry-profiles-e2e Run E2E profile filtering test (requires b24-ai-starter-otel)"
+	@echo "  test-telemetry-e2e          Run E2E tests (requires b24-ai-starter-otel)"
+	@echo "  test-telemetry-app-events   Run all application integration point tests"
+	@echo "  test-telemetry-app-lifecycle Run app install/uninstall lifecycle tests"
+	@echo "  test-telemetry-ui-events    Run UI events and session context trait tests"
+	@echo "  test-telemetry-action-events Run B24 event handler action tracking tests"
+	@echo "  test-telemetry-api-calls    Run Bitrix24 API call tracking tests"
+	@echo "  test-telemetry-error-tracking Run exception listener error tracking tests"
+	@echo "  test-telemetry-session-context Run session ID propagation tests"
+	@echo "  test-telemetry-frontend-events Run frontend telemetry endpoint tests (Sprint 8)"
+	@echo "  test-telemetry-frontend-e2e  Run frontend telemetry full-flow E2E test (requires b24-ai-starter-otel)"
 	@echo ""
 	@echo "💡 Quick start: make dev-init"
 	@echo ""
@@ -149,6 +174,117 @@ security-scan:
 .PHONY: security-tests
 security-tests:
 	@./scripts/security-tests.sh $(SECURITY_TESTS_ARGS)
+
+# Telemetry Testing
+.PHONY: test-telemetry
+test-telemetry: ## Run all telemetry tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --configuration phpunit.xml.dist
+
+.PHONY: test-telemetry-null
+test-telemetry-null: ## Run NullTelemetryService tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-null-service
+
+.PHONY: test-telemetry-real
+test-telemetry-real: ## Run RealTelemetryService tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-real-service
+
+.PHONY: test-telemetry-config
+test-telemetry-config: ## Run OTLP configuration tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-config
+
+.PHONY: test-telemetry-factory
+test-telemetry-factory: ## Run TelemetryFactory tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-factory
+
+.PHONY: test-telemetry-di
+test-telemetry-di: ## Run Dependency Injection integration tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-di
+
+.PHONY: test-telemetry-integration
+test-telemetry-integration: ## Run telemetry integration tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-integration
+
+.PHONY: test-telemetry-profiles
+test-telemetry-profiles: ## Run telemetry profiles tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-profiles
+
+.PHONY: test-telemetry-attribute-groups
+test-telemetry-attribute-groups: ## Run AttributeGroupManager tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-attribute-groups
+
+.PHONY: test-telemetry-filtering
+test-telemetry-filtering: ## Run attribute filtering tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-filtering
+
+.PHONY: test-telemetry-monolog
+test-telemetry-monolog: ## Run Monolog integration tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-monolog
+
+.PHONY: test-telemetry-monolog-e2e
+test-telemetry-monolog-e2e: ## Run E2E Monolog test (requires b24-ai-starter-otel running)
+	@echo "🚀 Checking b24-ai-starter-otel infrastructure..."
+	@cd ../b24-ai-starter-otel && docker-compose ps | grep -q "Up" || (echo "❌ b24-ai-starter-otel not running. Start with: cd ../b24-ai-starter-otel && make start" && exit 1)
+	@echo "✓ Infrastructure is running"
+	@echo ""
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm -e TELEMETRY_ENABLED=true --workdir /var/www php-cli php bin/test-monolog-e2e.php
+
+.PHONY: test-telemetry-profiles-e2e
+test-telemetry-profiles-e2e: ## Run E2E profile filtering test (requires b24-ai-starter-otel running)
+	@echo "🚀 Checking b24-ai-starter-otel infrastructure..."
+	@cd ../b24-ai-starter-otel && docker-compose ps | grep -q "Up" || (echo "❌ b24-ai-starter-otel not running. Start with: cd ../b24-ai-starter-otel && make start" && exit 1)
+	@echo "✓ Infrastructure is running"
+	@echo ""
+	@echo "🧪 Running E2E Profile Filtering Test..."
+	@echo "   Profile: simple-ui (Lifecycle + UI only)"
+	@echo ""
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm -e TELEMETRY_ENABLED=true --workdir /var/www php-cli php bin/test-profile-filtering.php
+
+.PHONY: test-telemetry-e2e
+test-telemetry-e2e: ## Run end-to-end telemetry tests (requires b24-ai-starter-otel running)
+	@echo "🚀 Running E2E Telemetry Test"
+	@cd backends/php && ./tests/Telemetry/E2E/run-e2e-test.sh
+
+.PHONY: test-telemetry-app-events
+test-telemetry-app-events: ## Run all application integration point tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-app-events
+
+.PHONY: test-telemetry-app-lifecycle
+test-telemetry-app-lifecycle: ## Run app install/uninstall lifecycle tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-app-lifecycle
+
+.PHONY: test-telemetry-ui-events
+test-telemetry-ui-events: ## Run UI events and session context trait tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-ui-events
+
+.PHONY: test-telemetry-action-events
+test-telemetry-action-events: ## Run B24 event handler action tracking tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-action-events
+
+.PHONY: test-telemetry-api-calls
+test-telemetry-api-calls: ## Run Bitrix24 API call tracking tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-api-calls
+
+.PHONY: test-telemetry-error-tracking
+test-telemetry-error-tracking: ## Run exception listener error tracking tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-error-tracking
+
+.PHONY: test-telemetry-session-context
+test-telemetry-session-context: ## Run session ID propagation tests
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-session-context
+
+.PHONY: test-telemetry-frontend-events
+test-telemetry-frontend-events: ## Run frontend telemetry endpoint tests (DTO unit + controller WebTest)
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm --workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-frontend-events
+
+.PHONY: test-telemetry-frontend-e2e
+test-telemetry-frontend-e2e: ## Run frontend telemetry full-flow E2E test (requires b24-ai-starter-otel running)
+	@echo "Убедитесь что b24-ai-starter-otel запущен: cd ../b24-ai-starter-otel && make up"
+	COMPOSE_PROFILES=php-cli $(DOCKER_COMPOSE) run --rm \
+		-e TELEMETRY_ENABLED=true \
+		-e OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318 \
+		-e CLICKHOUSE_USER=$${CLICKHOUSE_USER:-telemetry_user} \
+		-e CLICKHOUSE_PASSWORD=$${CLICKHOUSE_PASSWORD:-changeme_secure_password} \
+		--workdir /var/www php-cli vendor/bin/phpunit --testsuite telemetry-frontend-e2e
 
 # Doctrine/Symfony database commands
 
